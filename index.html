@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Xray Scanner</title>
+
+<style>
+    body {
+        background: linear-gradient(to right, #3a3a3a, #1f1f1f);
+        text-align: center;
+        font-size: large;
+        font-style: italic;
+        color: aliceblue;
+        margin: 0;
+        font-family: Arial, sans-serif;
+    }
+
+    .head {
+        margin-top: 40px;
+        font-family: 'Times New Roman', Times, serif;
+    }
+
+    .scanner-box {
+        width: 300px;
+        height: 160px;
+        margin: 30px auto;
+        border: 2px dashed #020405;
+        border-radius: 15px;
+        position: relative;
+        cursor: pointer;
+        overflow: hidden;
+        box-shadow: 0 0 15px rgba(0, 229, 255, 0.6);
+    }
+
+    .scanner-box:hover {
+        box-shadow: 0 0 25px rgba(0, 229, 255, 1);
+    }
+
+    .scanner-text {
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        color: #647375;
+        font-size: 16px;
+        pointer-events: none;
+    }
+
+    .scan-line {
+        position: absolute;
+        top: -20px;
+        width: 100%;
+        height: 6px;
+        background: linear-gradient(to right, transparent, #00e5ff, transparent);
+        animation: scan 2.5s linear infinite;
+    }
+
+    @keyframes scan {
+        from { top: -20px; }
+        to { top: 180px; }
+    }
+
+    input[type="file"] {
+        opacity: 0;
+        width: 100%;
+        height: 100%;
+        cursor: pointer;
+    }
+
+    #fileName {
+        margin-top: 10px;
+        font-size: 14px;
+        color: #b3e5fc;
+    }
+
+    .btn1, .btn2 {
+        margin-top: 20px;
+        margin-right: 10px;
+        color: white;
+        border-radius: 10px;
+        width: 120px;
+        height: 35px;
+        font-size: 14px;
+        border: none;
+        cursor: pointer;
+    }
+
+    .btn1 { background-color: rgb(12, 36, 154); }
+    .btn2 { background-color: crimson; }
+    .foot{ width: 100%; background-color: #d7dee2; height: 38%; border-color: #b3e5fc; border-radius: 10px; text-align: center; position:absolute; margin-top: 10%; color: black; } .foot:hover{ opacity: -1px; } .foot .copyright{ width: 92%; background-color: #272525; height: 0.9%; border-color: #b3e5fc; border-radius: 70px; text-align: center; position:absolute; margin-top: 3%; margin-left: 4.1%; color: rgb(48, 45, 43); visibility: calc(0.2,10); position: relative; } .foot h3{ font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif; font-size: x-large; margin: 0.3%; } .foot h4{ font-size: large; font-family: Georgia, 'Times New Roman', Times, serif; font-weight: 100; }
+
+    #resultPage {
+        display: none;
+        margin-top: 20px;
+    }
+    #resultPage img {
+        width: 300px;
+        border-radius: 15px;
+        border: 3px solid #00e5ff;
+    }
+    #resultPage .health {
+        margin-top: 20px;
+        font-size: x-large;
+        color: #00ff99;
+    }
+    #resultPage .disease {
+        margin-top: 10px;
+        font-size: large;
+        color: #ff4d4d;
+    }
+</style>
+</head>
+<body>
+
+<h1>X-ray Scanner</h1>  
+<header class="head">
+    <h2>Please, Upload the image</h2>
+</header>
+
+<div class="scanner-box">
+    <div class="scan-line"></div>
+    <div class="scanner-text">Click or Drop Image Here</div>
+    <input type="file" accept="image/*" id="xrayImage" onchange="showFileName(this)">
+</div>
+
+<div id="fileName"></div>
+
+<button class="btn1" onclick="showResult()">Result</button>
+<button class="btn2" onclick="location.reload()">Reset</button>
+
+<div id="resultPage">
+    <h2>Scan Result</h2>
+    <img id="resultImage" src="" alt="Uploaded X-ray Image">
+    <div class="health" id="healthPercentage"></div>
+    <div class="disease" id="diseaseStatus"></div>
+</div>
+<footer class="foot"> <h3>About</h3> <h4>The X-ray Scanner project is a web-based simulation designed to mimic an X-ray scanning system, allowing users to upload images and visualize a scanning effect through animations. Beyond the visual interface, this project can be extended with Machine Learning (ML) techniques, particularly Convolutional Neural Networks (CNNs), to analyze the uploaded images for automated detection or classification, such as identifying fractures, anomalies, or objects in the scan. The CNN model can process image features like edges, shapes, and textures, making it suitable for image recognition tasks. By integrating ML, the project not only demonstrates interactive frontend design with HTML, CSS, and JavaScript, but also showcases how AI-driven image analysis can be combined with web applications. This makes the X-ray Scanner both an educational simulation and a potential foundation for real-world applications in medical imaging or security scanning.</h4> <div class="copyright"> Copyright © 2020 All Rights Reserved X-ray Sacnner.com </div> </footer>
+
+<script>
+    let uploadedImage = null;
+
+    function showFileName(input) {
+        if (input.files.length > 0) {
+            uploadedImage = input.files[0];
+            document.getElementById("fileName").innerText =
+                "File selected: " + uploadedImage.name;
+        }
+    }
+
+    function showResult() {
+        if (!uploadedImage) {
+            alert("Please upload an image first!");
+            return;
+        }
+        document.getElementById("resultPage").style.display = "block";
+
+        const reader = new FileReader();
+        reader.onload = function(e) {
+            document.getElementById("resultImage").src = e.target.result;
+        }
+        reader.readAsDataURL(uploadedImage);
+
+        // const healthPercent = Math.floor(Math.random() * 50 + 50);
+        // const diseasePercent = 100 - healthPercent;
+
+        // document.getElementById("healthPercentage").innerText = "Health: " + healthPercent + "%";
+        // document.getElementById("diseaseStatus").innerText = "Disease Risk: " + diseasePercent + "%";
+    }
+</script>
+
+</body>
+</html>
